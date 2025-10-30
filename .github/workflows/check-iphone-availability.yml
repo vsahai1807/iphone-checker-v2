@@ -1,0 +1,30 @@
+name: Check iPhone 17 Pro Max Availability
+
+on:
+  schedule:
+    # Runs every 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  check-availability:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Check iPhone availability
+        env:
+          NOTIFICATION_WEBHOOK: ${{ secrets.NOTIFICATION_WEBHOOK }}
+          ZIP_CODE: ${{ secrets.ZIP_CODE }}
+          IPHONE_CONFIGS: ${{ secrets.IPHONE_CONFIGS }}
+        run: node scripts/check-availability.js
