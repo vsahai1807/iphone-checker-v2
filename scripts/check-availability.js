@@ -167,16 +167,23 @@ async function main() {
       console.log(`Checking: ${config.name}`)
       console.log(`${"=".repeat(60)}`)
 
-      const stores = await checkAvailability(config.model)
-      const { message, hasAvailability } = formatResults(config, stores)
+      try {
+        const stores = await checkAvailability(config.model)
+        const { message, hasAvailability } = formatResults(config, stores)
 
-      console.log("\n" + message)
+        console.log("\n" + message)
 
-      // Send notification if any stores have availability or ALWAYS_NOTIFY is set
-      if (hasAvailability || process.env.ALWAYS_NOTIFY === "true") {
         await sendNotification(message)
-      } else {
-        console.log(`No availability found for ${config.name}. Skipping notification.`)
+
+        if (hasAvailability) {
+          console.log(`✅ Availability found for ${config.name}. Notification sent.`)
+        } else {
+          console.log(`ℹ️ No availability for ${config.name}. Status notification sent.`)
+        }
+      } catch (error) {
+        console.error(`Error checking ${config.name}:`, error)
+        const errorMessage = `⚠️ Error checking ${config.name}\nModel: ${config.model}\nError: ${error.message}\nTime: ${new Date().toLocaleString()}`
+        await sendNotification(errorMessage)
       }
 
       // Add a small delay between requests to avoid rate limiting
