@@ -95,12 +95,18 @@ function formatResults(config, stores) {
   const availableStores = stores.filter((s) => s.available)
   const unavailableStores = stores.filter((s) => !s.available)
 
+  const estTime = new Date().toLocaleString("en-US", {
+    timeZone: "America/New_York",
+    dateStyle: "medium",
+    timeStyle: "long",
+  })
+
   let message = `📱 iPhone 17 Pro Max - ${config.name}\n`
   message += `Color: ${config.color}\n`
   message += `Storage: ${config.storage}\n`
   message += `Model: ${config.model}\n`
   message += `Location: ${CONFIG.zipCode}\n`
-  message += `Time: ${new Date().toLocaleString()}\n`
+  message += `Time: ${estTime}\n`
   message += `${"=".repeat(50)}\n\n`
 
   if (availableStores.length > 0) {
@@ -182,7 +188,12 @@ async function main() {
         }
       } catch (error) {
         console.error(`Error checking ${config.name}:`, error)
-        const errorMessage = `⚠️ Error checking ${config.name}\nModel: ${config.model}\nError: ${error.message}\nTime: ${new Date().toLocaleString()}`
+        const estTime = new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+          dateStyle: "medium",
+          timeStyle: "long",
+        })
+        const errorMessage = `⚠️ Error checking ${config.name}\nModel: ${config.model}\nError: ${error.message}\nTime: ${estTime}`
         await sendNotification(errorMessage)
       }
 
